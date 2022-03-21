@@ -1,10 +1,7 @@
 import React from 'react';
-import PopupWithForm from './PopupWithForm';
 
-export default function DeleteModal({name, isOpen}) {
+export default function DeleteModal({title}) {
   return <div>
-    <div className={`popup ${name}-modal ${isOpen ? 'popup_open' : ''}`} name={'delete'} isOpen={isOpen}>
-
-    </div>
+     <h2 className="form__title">{title}</h2>
   </div>
 }

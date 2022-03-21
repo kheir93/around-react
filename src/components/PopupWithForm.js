@@ -11,9 +11,7 @@ export default function PopupWithForm({isOpen, name, onClose, children, buttonNa
         <button className="form__save" type="submit" >{buttonName}</button>
       </form>
     </div>
-
   </div>
-
 }
 
 

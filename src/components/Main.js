@@ -1,44 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import api from '../utils/api'
+import api from '../utils/api';
 import Card from './Card';
 
-export default function Main({onEditAvatarClick, onEditProfileClick, onAddPlaceClick, likes, onCardClick}) {
+export default function Main({onEditAvatarClick, onEditProfileClick, onAddPlaceClick, onCardClick, onBinClick}) {
 
+  //State management//
   const [userAvatar, setUserAvatar] = useState("");
   const [userName, setUserName] = useState("");
   const [userDescription, setUserDescription] = useState("");
-  const [cards, setCards] = useState([])
-  // const [cardLoading, isCardLoading] = useState("")
+  const [cards, setCards] = useState([]);
 
+  //Getting user and cards from api//
   useEffect(() => {
     api.getAppInfo()
-    .then(([profile]) => {
-      //const profileId = profile._id;
-      setUserName(profile.name)
-      setUserDescription(profile.about)
-      setUserAvatar(profile.avatar)
+    .then(([profile, cardData]) => {
+      setUserName(profile.name);
+      setUserDescription(profile.about);
+      setUserAvatar(profile.avatar);
+      setCards(cardData)
     })
-    //const profileId = profile._id;
-    .catch(err => console.log(err));
-  });
-
-
-
-  useEffect(() => {
-    api.getInitialCards()
-    .then(([cardData]) =>{
-      setCards(cardData.map((card) => ({
-        _id: card._id,
-        card: card,
-        alt: card.name,
-        src: card.link
-        }))
-      )
-      console.log(setCards)
-    //const profileId = profile._id;
-    .catch(err => console.log(err));
-    })
-    }, [])
+    .catch(err => console.log(err))
+  }, []);
 
   return (
     <main>
@@ -53,30 +35,17 @@ export default function Main({onEditAvatarClick, onEditProfileClick, onAddPlaceC
       </section>
       <section>
         <ul className="elements" id="elements">
-          {cards.map((cardData) => (
+          {cards.map((card) => (
             <Card
-              key={cardData._id}
-              src={cardData.link}
-              alt={cardData.name}
+              key={card._id}
+              like={card.like}
+              card={card}
+              onCardClick={onCardClick}
+              onBinClick={onBinClick}
             />))}
         </ul>
       </section>
-      <div className="place-modal popup">
-        <figure className="place-modal__figure">
-          <button className="popup__close-button"></button>
-          <img className="place-modal__image" type="image" name="place" src="#" alt="#"/>
-          <h2 className="place-modal__caption"></h2>
-        </figure>
-      </div>
-      <div className="delete-modal popup">
-        <form className="form">
-          <div className="popup__close-button-container">
-            <button className="popup__close-button" type="reset"></button>
-          </div>
-          <h2 className="form__title">Are you sure ?</h2>
-          <button className="form__save" type="submit">Yes</button>
-        </form>
-      </div>
+
     </main>
   );
 }

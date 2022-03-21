@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from './utils/api'
+import api from './utils/api';
 import Header from './components/Header.js';
 import Main from './components/Main.js';
 import Footer from './components/Footer.js';
@@ -8,16 +8,19 @@ import ProfileModal from "./components/profileModal.js";
 import CardModal from "./components/cardModal.js";
 import DeleteModal from "./components/deleteModal.js";
 import AvatarModal from "./components/avatarModal.js";
+import ImagePopup from "./components/ImagePopup";
+
 
 export default function App() {
 
-  //Event triggers management//
+  //State management//
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
-  // const [isCardClicked, setIsCardClicked] = useState(false)
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [selectedCard , setSelectedCard] = useState(null);
 
-
+  //Escape key bind//
   function escKey(evt) {
     evt.preventDefault();
     if (evt.key === "Escape") {
@@ -25,21 +28,39 @@ export default function App() {
     }
   };
 
+  //Escape function//
+  function escUp() {
+    document.addEventListener("keyup", escKey);
+  };
+
+  //Profile button//
   function handleEditProfileClick(e) {
     setIsEditProfilePopupOpen(true);
-    console.log(isEditProfilePopupOpen)
-    document.addEventListener("keyup", escKey);
+    escUp()
   };
 
+  //Add button//
   function handleAddPlaceClick(e) {
     setIsAddPlacePopupOpen(true);
-    console.log(isAddPlacePopupOpen)
-    document.addEventListener("keyup", escKey);
+    escUp()
   };
 
+  //Avatar icon//
   function handleEditAvatarClick(e) {
     setIsEditAvatarPopupOpen(true);
-    document.addEventListener("keyup", escKey);
+    escUp()
+  };
+
+  //Image zoomin//
+  function handleCardClick(card) {
+    setSelectedCard(card);
+    escUp()
+  };
+
+  //Delete button//
+  function handleCarDelete(card) {
+    setIsDeletePopupOpen(card);
+    escUp()
   };
 
   function closePopup(e) {
@@ -48,17 +69,15 @@ export default function App() {
     }
   }
 
-  // function handleCardClick() {
-  //   setIsCardClicked(true)
-  // }
-
-  function closeAllPopups(e) {
+  //Popup closing management//
+  function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditProfilePopupOpen(false);
+    setIsDeletePopupOpen(false);
+    setSelectedCard(null);
+    escUp()
   }
-
-
 
   return (
     <div className="root">
@@ -66,30 +85,30 @@ export default function App() {
       <Main
         onEditAvatarClick={handleEditAvatarClick}
         onEditProfileClick={handleEditProfileClick}
-        onAddPlaceClick={handleAddPlaceClick}>
-      </Main>
-      {/* <ProfileModal
-        isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups}
+        onAddPlaceClick={handleAddPlaceClick}
+        onBinClick={handleCarDelete}
+        onCardClick={handleCardClick}
       />
-      <CardModal
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopups}
-      /> */}
-      <PopupWithForm isOpen={isEditAvatarPopupOpen} name={'avatar'} buttonName='Save' onClose={closeAllPopups}  onPopupClose={closePopup}>
-        <AvatarModal/>
+
+      <PopupWithForm isOpen={isEditAvatarPopupOpen} name={'avatar'} buttonName='Save' onClose={closeAllPopups} onPopupClose={closePopup}>
+        <AvatarModal title='Change profile picture'/>
       </PopupWithForm>
 
       <PopupWithForm isOpen={isEditProfilePopupOpen} name={'edit'} buttonName='Save' onClose={closeAllPopups} onPopupClose={closePopup}>
-        <ProfileModal/>
+        <ProfileModal title='Edit profile'/>
       </PopupWithForm>
 
        <PopupWithForm isOpen={isAddPlacePopupOpen} name={'add'} buttonName='Create' onClose={closeAllPopups} onPopupClose={closePopup}>
-        <CardModal placeholder='Title'/>
+        <CardModal placeholder='Title' title='New place'/>
       </PopupWithForm>
 
-      <Footer/>
+      <PopupWithForm isOpen={isDeletePopupOpen} name='delete' buttonName='Yes' onClose={closeAllPopups} onPopupClose={closePopup}>
+        <DeleteModal title='Are you sure ?'/>
+      </PopupWithForm>
 
+      <ImagePopup card={selectedCard} name={'place'} onClose={closeAllPopups} onPopupClose={closePopup}/>
+
+      <Footer/>
     </div>
   );
 }
