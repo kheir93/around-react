@@ -1,10 +1,13 @@
 .profile__avatar {
-  z-index: 0;
+  z-index: 10;
   outline: none;
   max-height: 130px;
   max-width: 130px;
   border-radius: 100%;
-  object-fit: contain;
+  background-image: url(../../../images/kal.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+
 }
 
 @media (max-width: 768px) {
