@@ -45,7 +45,6 @@ export default function Main({onEditAvatarClick, onEditProfileClick, onAddPlaceC
             />))}
         </ul>
       </section>
-
     </main>
   );
 }

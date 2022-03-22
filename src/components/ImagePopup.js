@@ -1,14 +1,16 @@
 import React from 'react';
 
-export default function ImagePopup({card, onClose, name, onPopupClose}) {
+export default function ImagePopup({card, onClose, name, popupCloseByClick}) {
 
-   return <div>
-    <div className={`popup ${name}-modal  ${card ? 'popup_open' : ''}`} name={name} onClick={onPopupClose}>
-      <figure className="place-modal__figure">
-        <button className="popup__close-button" onClick={onClose}></button>
-        <img className="place-modal__image" type="image" name="place" src={card ? card.link : ''} alt={card ? card.name : ''}/>
-        <h2 className="place-modal__caption">{card ? card.name : ''}</h2>
-      </figure>
+   return (
+    <div>
+      <div className={`popup ${name}-modal  ${card ? 'popup_open' : ''}`} name={name} onClick={popupCloseByClick}>
+        <figure className="place-modal__figure">
+          <button className="popup__close-button" onClick={onClose}></button>
+          <img className="place-modal__image" type="image" name="place" src={card ? card.link : ''} alt={card ? card.name : ''}/>
+          <h2 className="place-modal__caption">{card ? card.name : ''}</h2>
+        </figure>
+      </div>
     </div>
-  </div>
+  );
 }
