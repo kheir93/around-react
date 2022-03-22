@@ -79,7 +79,7 @@ export default function App() {
     return () => document.removeEventListener('keydown', closeByEscape)
   }, [])
 
-  function closePopup(e) {
+  function handleOverlayClick(e) {
     if (e.target.classList.contains("popup")) {
     closeAllPopups()
     }
@@ -94,25 +94,26 @@ export default function App() {
         onAddPlaceClick={handleAddPlaceClick}
         onBinClick={handleCarDelete}
         onCardClick={handleCardClick}
-      />
+      ></Main>
 
-      <PopupWithForm isOpen={isEditAvatarPopupOpen} name={'avatar'} title='Change profile picture' buttonName='Save' onClose={closeAllPopups} popupCloseByClick={closePopup}>
+      <PopupWithForm isOpen={isEditAvatarPopupOpen} name={'avatar'} title='Change profile picture' buttonName='Save' onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
         <AvatarModal/>
       </PopupWithForm>
 
-      <PopupWithForm isOpen={isEditProfilePopupOpen} name={'edit'} title='Edit profile' buttonName='Save' onClose={closeAllPopups} popupCloseByClick={closePopup}>
+      <PopupWithForm isOpen={isEditProfilePopupOpen} name={'edit'} title='Edit profile' buttonName='Save' onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
         <ProfileModal/>
       </PopupWithForm>
 
-       <PopupWithForm isOpen={isAddPlacePopupOpen} name={'add'} title='New place' buttonName='Create' onClose={closeAllPopups} popupCloseByClick={closePopup}>
+       <PopupWithForm isOpen={isAddPlacePopupOpen} name={'add'} title='New place' buttonName='Create' onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
         <CardModal placeholder='Title'/>
       </PopupWithForm>
 
-      <PopupWithForm isOpen={isDeletePopupOpen} name='delete' buttonName='Yes' title='Are you sure ?' onClose={closeAllPopups} popupCloseByClick={closePopup}>
+      <PopupWithForm isOpen={isDeletePopupOpen} name='delete' buttonName='Yes' title='Are you sure ?' onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
         <DeleteModal/>
       </PopupWithForm>
 
-      <ImagePopup card={selectedCard} name={'place'} onClose={closeAllPopups} overlayCloseByClick={closeAllPopups} popupCloseByClick={closePopup}/>
+      <ImagePopup card={selectedCard} name={'place'} onClose={closeAllPopups} overlayCloseByClick={closeAllPopups} onOverlayClick={handleOverlayClick}/>
+
       <Footer/>
     </div>
   );

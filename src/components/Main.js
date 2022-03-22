@@ -25,16 +25,16 @@ export default function Main({onEditAvatarClick, onEditProfileClick, onAddPlaceC
   return (
     <main>
       <section className="profile">
-        <button className="profile__avatar-button" onClick={onEditAvatarClick} id='avatarButton'>
-          <img className="profile__avatar" id="infoAvatar"  src={userAvatar} alt="avatar"/>
+        <button className="profile__avatar-button" onClick={onEditAvatarClick}>
+          <img className="profile__avatar"  src={userAvatar} alt="avatar"/>
         </button>
-        <h1 className="profile__name" id="infoName">{userName}</h1>
+        <h1 className="profile__name">{userName}</h1>
         <button className="profile__edit-button" onClick={onEditProfileClick} type="button"></button>
-        <p className="profile__about" id="infoAbout">{userDescription}</p>
+        <p className="profile__about">{userDescription}</p>
         <button className="profile__add-button" onClick={onAddPlaceClick} type="button"></button>
       </section>
       <section>
-        <ul className="elements" id="elements">
+        <ul className="elements">
           {cards.map((card) => (
             <Card
               key={card._id}
