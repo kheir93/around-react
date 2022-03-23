@@ -4,11 +4,7 @@ import React from 'react';
 export default function ProfileModal() {
 
   return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center"
-    }}>
+    <div className='form'>
       <label className="form__field">
         <input type="text" className="form__input form__input_name" placeholder="name" name="name" defaultValue="Jacques Cousteau" required minLength="2" maxLength="40"/>
         <span className="form__input-error inputName-error">Please fill out this field.</span>
