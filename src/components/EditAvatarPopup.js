@@ -5,9 +5,10 @@ export default function EditAvatarPopup({isOpen, onClose, onOverlayClick, onUpda
 
   const avatarRef = useRef()
 
+  //Submit updated avatar values//
   function handleSubmit(e) {
     e.preventDefault();
-
+    //Value to pass to the external handler//
     onUpdateAvatar({
     avatar: avatarRef.current.value
   });

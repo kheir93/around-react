@@ -54,6 +54,7 @@ export default function App() {
     .catch(err => console.log(err))
   }
 
+  //Add new card//
   function handleAddPlaceSubmit(data) {
     api.newCard({
       title: data.title,
@@ -101,8 +102,6 @@ export default function App() {
     setSelectedCard(card);
   };
 
-
-
   //Popup closing management//
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
@@ -112,6 +111,7 @@ export default function App() {
     setSelectedCard(null);
   }
 
+  //Escape key binding//
   useEffect(() => {
     const closeByEscape = (e) => {
       if (e.key === 'Escape') {
@@ -122,17 +122,18 @@ export default function App() {
     return () => document.removeEventListener('keydown', closeByEscape)
   }, [])
 
+  //Close popups on overlay clicks//
   function handleOverlayClick(e) {
     if (e.target.classList.contains("popup")) {
     closeAllPopups()
     }
   };
 
+  //Likes handling//
   function handleCardLike(card) {
-    // Check one more time if this card was already liked
+    //Like status//
     const isLiked = card.likes.some(user => user._id === currentUser._id);
-
-    // Send a request to the API and getting the updated card data
+    //Like status management//
     if (isLiked) {
       api.removeLike(card._id, isLiked).then((newCard) => {
           setCards((state) => state.map((currentCard) => currentCard._id === card._id ? newCard : currentCard));
@@ -164,10 +165,6 @@ export default function App() {
         <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onAddPlaceSubmit={handleAddPlaceSubmit}/>
 
         <DeleteConfirmationPopup isOpen={isDeletePopupOpen} card={cardDelete} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onDeleteConfirmation={handleCardDelete}/>
-
-        {/* <PopupWithForm isOpen={isDeletePopupOpen} name='delete' buttonName='Yes' title='Are you sure ?'  onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
-          <DeleteModal onSubmit={handleCardDelete}/>
-        </PopupWithForm> */}
 
         <ImagePopup card={selectedCard} name={'place'} onClose={closeAllPopups} overlayCloseByClick={closeAllPopups} onOverlayClick={handleOverlayClick}/>
 

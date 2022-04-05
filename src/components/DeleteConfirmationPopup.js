@@ -1,9 +1,7 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
 
-
 export default function DeleteConfirmationPopup({isOpen, onClose, onOverlayClick, onDeleteConfirmation, card}) {
-
 
   function handleSubmit(e) {
     e.preventDefault();

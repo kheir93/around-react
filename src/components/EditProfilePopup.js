@@ -1,42 +1,36 @@
 import React, {useState, useEffect, useContext} from "react";
-import api from '../utils/api';
 import PopupWithForm from "./PopupWithForm";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 
 export default function EditProfilePopup({isOpen, onClose, onOverlayClick, onUpdateUser}) {
 
+  //State management//
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
 
   // Subscription to the context
   const currentUser = useContext(CurrentUserContext);
 
-  useEffect(() => {
+  //Profile fields sync//
+  useEffect((e) => {
     setName(currentUser.name || '');
     setDescription(currentUser.about || '')
-  }, [currentUser, isOpen])
+  }, [isOpen])
 
-  // After loading the current user from the API
-  // their data will be used in managed components.
-  // useEffect(() => {
-  //   setName(currentUser.name);
-  //   setDescription(currentUser.about);
-  // }, [currentUser]);
-
-
+  //Name field change management//
   function handleChangeName(e) {
     setName(e.target.value);
   }
 
+  //About field change management//
   function handleChangeDescription(e) {
     setDescription(e.target.value);
   }
 
+  //Submit updated profile values//
   function handleSubmit(e) {
-    // Prevent the browser from navigating to the form address
     e.preventDefault();
-
-    // Pass the values of the managed components to the external handler
+    //Value to pass to the external handler//
     onUpdateUser({
       name,
       about: description,

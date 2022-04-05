@@ -3,22 +3,27 @@ import PopupWithForm from './PopupWithForm';
 
 export default function AddPlacePopup({isOpen, onClose, onOverlayClick,  onAddPlaceSubmit}) {
 
+  //State management//
   const [title, setTitle] = useState('');
   const [link, setLink] = useState('');
 
+  //Place name field change management//
   function handleChangeTitle(e) {
     setTitle(e.target.value);
   };
 
+  //Place URL field change management//
   function handleChangeLink(e) {
     setLink(e.target.value);
   };
 
+  //Field content//
   useEffect(() => {
     setTitle('');
     setLink('');
   }, [isOpen])
 
+  ////Submit updated place values//
   function handleSubmit(e) {
     e.preventDefault();
     onAddPlaceSubmit({title, link})
