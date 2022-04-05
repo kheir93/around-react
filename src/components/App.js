@@ -19,39 +19,40 @@ export default function App() {
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardDelete, setCardDelete] = useState(null);
-  const [currentUser, setCurrentUser] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
 
   //Cards and profile rendering//
   useEffect(() => {
     api.getAppInfo()
-    .then(([profile, cardData]) => {
-      setCurrentUser(profile)
-      setCards(cardData)
-    })
-    .catch(err => console.log(err))
+      .then(([profile, cardData]) => {
+        setCurrentUser(profile)
+        setCards(cardData)
+      })
+      .catch(err => console.log(err))
   }, []);
 
   //Profile popup validation//
-  function handleUpdateUser(e) {
+  function handleUpdateUser(data) {
     api.setUserInfo({
-      name: e.name,
-      about : e.about})
-    .then((profile) => {
-      setCurrentUser(profile)
-      closeAllPopups()
+      name: data.name,
+      about: data.about
     })
-    .catch(err => console.log(err))
+      .then((profile) => {
+        setCurrentUser(profile)
+        closeAllPopups()
+      })
+      .catch(err => console.log(err))
   }
 
   //Avatar popup validation//
-  function handleUpdateAvatar(e) {
-    api.setUserAvatar({avatar: e.avatar})
-    .then((profile) => {
-      setCurrentUser(profile)
-      closeAllPopups()
-    })
-    .catch(err => console.log(err))
+  function handleUpdateAvatar(user) {
+    api.setUserAvatar({ avatar: user.avatar })
+      .then((profile) => {
+        setCurrentUser(profile)
+        closeAllPopups()
+      })
+      .catch(err => console.log(err))
   }
 
   //Add new card//
@@ -60,11 +61,11 @@ export default function App() {
       title: data.title,
       link: data.link
     })
-    .then((newCard) => {
-     setCards([newCard, ...cards]);
-     closeAllPopups()
-  })
-  .catch(err => console.log(err))
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+        closeAllPopups()
+      })
+      .catch(err => console.log(err))
   }
 
   //Delete button//
@@ -74,26 +75,26 @@ export default function App() {
   };
 
   function handleCardDelete(card) {
-    api.removeCard({cardId: card._id})
+    api.removeCard({ cardId: card._id })
       .then(() => {
         setCards((cards) => cards.filter((item) => item._id !== card._id));
         closeAllPopups();
       })
       .catch((err) => console.log(err));
-    };
+  };
 
   //Profile button//
-  function handleEditProfileClick(e) {
+  function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
   };
 
   //Add button//
-  function handleAddPlaceClick(e) {
+  function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
   };
 
   //Avatar icon//
-  function handleEditAvatarClick(e) {
+  function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   };
 
@@ -125,7 +126,7 @@ export default function App() {
   //Close popups on overlay clicks//
   function handleOverlayClick(e) {
     if (e.target.classList.contains("popup")) {
-    closeAllPopups()
+      closeAllPopups()
     }
   };
 
@@ -136,18 +137,27 @@ export default function App() {
     //Like status management//
     if (isLiked) {
       api.removeLike(card._id, isLiked).then((newCard) => {
-          setCards((state) => state.map((currentCard) => currentCard._id === card._id ? newCard : currentCard));
-      })} else {
+        setCards((state) => state.map((currentCard) =>
+          currentCard._id === card._id ? newCard : currentCard
+        )
+        );
+      });
+    } else {
       api.addLike(card._id, !isLiked).then((newCard) => {
-          setCards((state) => state.map((currentCard) => currentCard._id === card._id ? newCard : currentCard));
-      }).catch(err => console.log(err))
+        setCards((state) =>
+          state.map((currentCard) =>
+            currentCard._id === card._id ? newCard : currentCard
+          )
+        );
+      })
+        .catch(err => console.log(err));
     }
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="root">
-        <Header/>
+        <Header />
         <Main
           onEditAvatarClick={handleEditAvatarClick}
           onEditProfileClick={handleEditProfileClick}
@@ -158,17 +168,17 @@ export default function App() {
           cards={cards}
         />
 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onUpdateAvatar={handleUpdateAvatar}/>
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onUpdateAvatar={handleUpdateAvatar} />
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onUpdateUser={handleUpdateUser}/>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onUpdateUser={handleUpdateUser} />
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onAddPlaceSubmit={handleAddPlaceSubmit}/>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onAddPlaceSubmit={handleAddPlaceSubmit} />
 
-        <DeleteConfirmationPopup isOpen={isDeletePopupOpen} card={cardDelete} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onDeleteConfirmation={handleCardDelete}/>
+        <DeleteConfirmationPopup isOpen={isDeletePopupOpen} card={cardDelete} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onDeleteConfirmation={handleCardDelete} />
 
-        <ImagePopup card={selectedCard} name={'place'} onClose={closeAllPopups} overlayCloseByClick={closeAllPopups} onOverlayClick={handleOverlayClick}/>
+        <ImagePopup card={selectedCard} name={'place'} onClose={closeAllPopups} overlayCloseByClick={closeAllPopups} onOverlayClick={handleOverlayClick} />
 
-        <Footer/>
+        <Footer />
       </div>
     </CurrentUserContext.Provider>
   );

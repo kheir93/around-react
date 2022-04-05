@@ -12,10 +12,10 @@ export default function EditProfilePopup({isOpen, onClose, onOverlayClick, onUpd
   const currentUser = useContext(CurrentUserContext);
 
   //Profile fields sync//
-  useEffect((e) => {
+  useEffect(() => {
     setName(currentUser.name || '');
     setDescription(currentUser.about || '')
-  }, [isOpen])
+  }, [currentUser, isOpen])
 
   //Name field change management//
   function handleChangeName(e) {
