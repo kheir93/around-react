@@ -20,3 +20,5 @@
 @import url(./blocks/delete-modal/delete-modal.css);
 @import url(./blocks/popup/popup.css);
 @import url(./blocks/popup/_open/popup_open.css);
+@import url(./blocks/card/card__delete_hidden.css);
+@import url(./blocks/card/card__delete_visible.css);

@@ -54,19 +54,19 @@ class Api {
       .then(this._checkResponse)
   }
 
-  newCard({ card }) {
+  newCard({ title, link }) {
     return fetch(this._baseUrl + '/cards', {
       headers: this._headers,
       method: 'POST',
       body: JSON.stringify({
-        name: card.name,
-        link: card.link
+        name: title,
+        link: link
       })
     })
       .then(this._checkResponse)
   }
 
-  removeCard(cardId) {
+  removeCard({cardId}) {
     return fetch(this._baseUrl + '/cards/' + cardId, {
       headers: this._headers,
       method: 'DELETE'
@@ -89,7 +89,13 @@ class Api {
     })
       .then(this._checkResponse)
   }
+  changeLikeCardStatus(cardId) {
+    return this.removeLike(cardId), this.addLike(cardId)
+  }
+
 }
+
+
 
 const api = new Api({
     baseUrl: 'https://around.nomoreparties.co/v1/group-13',

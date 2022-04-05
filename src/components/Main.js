@@ -1,36 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import api from '../utils/api';
 import Card from './Card';
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-export default function Main({onEditAvatarClick, onEditProfileClick, onAddPlaceClick, onCardClick, onBinClick}) {
-
-  //State management//
-  const [userAvatar, setUserAvatar] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userDescription, setUserDescription] = useState("");
-  const [cards, setCards] = useState([]);
-
-  //Getting user and cards from api//
-  useEffect(() => {
-    api.getAppInfo()
-    .then(([profile, cardData]) => {
-      setUserName(profile.name);
-      setUserDescription(profile.about);
-      setUserAvatar(profile.avatar);
-      setCards(cardData)
-    })
-    .catch(err => console.log(err))
-  }, []);
+export default function Main({onEditAvatarClick, onEditProfileClick, onAddPlaceClick, onCardClick, onBinClick, cards, onCardLike, onCardDelete}) {
+  const currentUser = React.useContext(CurrentUserContext);
 
   return (
     <main>
       <section className="profile">
         <button className="profile__avatar-button" onClick={onEditAvatarClick}>
-          <img className="profile__avatar"  src={userAvatar} alt="avatar"/>
+          <img className="profile__avatar"  src={currentUser.avatar} alt="avatar"/>
         </button>
-        <h1 className="profile__name">{userName}</h1>
+        <h1 className="profile__name">{currentUser.name}</h1>
         <button className="profile__edit-button" onClick={onEditProfileClick} type="button"></button>
-        <p className="profile__about">{userDescription}</p>
+        <p className="profile__about">{currentUser.about}</p>
         <button className="profile__add-button" onClick={onAddPlaceClick} type="button"></button>
       </section>
       <section>
@@ -41,7 +25,8 @@ export default function Main({onEditAvatarClick, onEditProfileClick, onAddPlaceC
               like={card.like}
               card={card}
               onCardClick={onCardClick}
-              onBinClick={onBinClick}
+              onCardLike={onCardLike}
+              onCardDelete={onCardDelete}
             />))}
         </ul>
       </section>

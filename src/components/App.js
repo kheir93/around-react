@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import api from '../utils/api.js';
-import Header from './Header.js';
-import Main from './Main.js';
-import Footer from './Footer.js';
-import PopupWithForm from './PopupWithForm.js';
-import ProfileModal from "./ProfileModal.js";
-import CardModal from "./CardModal.js";
-import DeleteModal from "./DeleteModal.js";
-import AvatarModal from "./AvatarModal.js";
+import api from '../utils/api';
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
+import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from "./AddPlacePopup";
 import ImagePopup from "./ImagePopup";
-
+import { CurrentUserContext } from "../contexts/CurrentUserContext"
+import DeleteConfirmationPopup from "./DeleteConfirmationPopup";
 
 export default function App() {
 
@@ -18,16 +17,69 @@ export default function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
-  const [selectedCard , setSelectedCard] = useState(null);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [cardDelete, setCardDelete] = useState(null);
+  const [currentUser, setCurrentUser] = useState([]);
+  const [cards, setCards] = useState([]);
 
-  //Escape key bind//
-  // function escKey(evt) {
-  //   evt.preventDefault();
-  //   if (evt.key === "Escape") {
-  //   return closeAllPopups()
-  //   }
-  // };
+  //Cards and profile rendering//
+  useEffect(() => {
+    api.getAppInfo()
+    .then(([profile, cardData]) => {
+      setCurrentUser(profile)
+      setCards(cardData)
+    })
+    .catch(err => console.log(err))
+  }, []);
 
+  //Profile popup validation//
+  function handleUpdateUser(e) {
+    api.setUserInfo({
+      name: e.name,
+      about : e.about})
+    .then((profile) => {
+      setCurrentUser(profile)
+      closeAllPopups()
+    })
+    .catch(err => console.log(err))
+  }
+
+  //Avatar popup validation//
+  function handleUpdateAvatar(e) {
+    api.setUserAvatar({avatar: e.avatar})
+    .then((profile) => {
+      setCurrentUser(profile)
+      closeAllPopups()
+    })
+    .catch(err => console.log(err))
+  }
+
+  function handleAddPlaceSubmit(data) {
+    api.newCard({
+      title: data.title,
+      link: data.link
+    })
+    .then((newCard) => {
+     setCards([newCard, ...cards]);
+     closeAllPopups()
+  })
+  .catch(err => console.log(err))
+  }
+
+  //Delete button//
+  function handleDeleteClick(card) {
+    setIsDeletePopupOpen(true);
+    setCardDelete(card)
+  };
+
+  function handleCardDelete(card) {
+    api.removeCard({cardId: card._id})
+      .then(() => {
+        setCards((cards) => cards.filter((item) => item._id !== card._id));
+        closeAllPopups();
+      })
+      .catch((err) => console.log(err));
+    };
 
   //Profile button//
   function handleEditProfileClick(e) {
@@ -49,16 +101,7 @@ export default function App() {
     setSelectedCard(card);
   };
 
-  //Delete button//
-  function handleCarDelete(card) {
-    setIsDeletePopupOpen(card);
-  };
 
-  // function closePopup(e) {
-  //   if (e.target.classList.contains("popup")) {
-  //   closeAllPopups()
-  //   }
-  // }
 
   //Popup closing management//
   function closeAllPopups() {
@@ -83,39 +126,54 @@ export default function App() {
     if (e.target.classList.contains("popup")) {
     closeAllPopups()
     }
+  };
+
+  function handleCardLike(card) {
+    // Check one more time if this card was already liked
+    const isLiked = card.likes.some(user => user._id === currentUser._id);
+
+    // Send a request to the API and getting the updated card data
+    if (isLiked) {
+      api.removeLike(card._id, isLiked).then((newCard) => {
+          setCards((state) => state.map((currentCard) => currentCard._id === card._id ? newCard : currentCard));
+      })} else {
+      api.addLike(card._id, !isLiked).then((newCard) => {
+          setCards((state) => state.map((currentCard) => currentCard._id === card._id ? newCard : currentCard));
+      }).catch(err => console.log(err))
+    }
   }
 
   return (
-    <div className="root">
-      <Header/>
-      <Main
-        onEditAvatarClick={handleEditAvatarClick}
-        onEditProfileClick={handleEditProfileClick}
-        onAddPlaceClick={handleAddPlaceClick}
-        onBinClick={handleCarDelete}
-        onCardClick={handleCardClick}
-      ></Main>
+    <CurrentUserContext.Provider value={currentUser}>
+      <div className="root">
+        <Header/>
+        <Main
+          onEditAvatarClick={handleEditAvatarClick}
+          onEditProfileClick={handleEditProfileClick}
+          onAddPlaceClick={handleAddPlaceClick}
+          onCardDelete={handleDeleteClick}
+          onCardClick={handleCardClick}
+          onCardLike={handleCardLike}
+          cards={cards}
+        />
 
-      <PopupWithForm isOpen={isEditAvatarPopupOpen} name={'avatar'} title='Change profile picture' buttonName='Save' onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
-        <AvatarModal/>
-      </PopupWithForm>
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onUpdateAvatar={handleUpdateAvatar}/>
 
-      <PopupWithForm isOpen={isEditProfilePopupOpen} name={'edit'} title='Edit profile' buttonName='Save' onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
-        <ProfileModal/>
-      </PopupWithForm>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onUpdateUser={handleUpdateUser}/>
 
-       <PopupWithForm isOpen={isAddPlacePopupOpen} name={'add'} title='New place' buttonName='Create' onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
-        <CardModal placeholder='Title'/>
-      </PopupWithForm>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onAddPlaceSubmit={handleAddPlaceSubmit}/>
 
-      <PopupWithForm isOpen={isDeletePopupOpen} name='delete' buttonName='Yes' title='Are you sure ?' onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
-        <DeleteModal/>
-      </PopupWithForm>
+        <DeleteConfirmationPopup isOpen={isDeletePopupOpen} card={cardDelete} onClose={closeAllPopups} onOverlayClick={handleOverlayClick} onDeleteConfirmation={handleCardDelete}/>
 
-      <ImagePopup card={selectedCard} name={'place'} onClose={closeAllPopups} overlayCloseByClick={closeAllPopups} onOverlayClick={handleOverlayClick}/>
+        {/* <PopupWithForm isOpen={isDeletePopupOpen} name='delete' buttonName='Yes' title='Are you sure ?'  onClose={closeAllPopups} onOverlayClick={handleOverlayClick}>
+          <DeleteModal onSubmit={handleCardDelete}/>
+        </PopupWithForm> */}
 
-      <Footer/>
-    </div>
+        <ImagePopup card={selectedCard} name={'place'} onClose={closeAllPopups} overlayCloseByClick={closeAllPopups} onOverlayClick={handleOverlayClick}/>
+
+        <Footer/>
+      </div>
+    </CurrentUserContext.Provider>
   );
 }
 
