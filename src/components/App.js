@@ -141,8 +141,8 @@ export default function App() {
           currentCard._id === card._id ? newCard : currentCard
         )
         )
-        .catch(err => console.log(err));
-      });
+      })
+      .catch(err => console.log(err));
     } else {
       api.addLike(card._id, !isLiked).then((newCard) => {
         setCards((state) =>
