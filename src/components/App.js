@@ -140,7 +140,8 @@ export default function App() {
         setCards((state) => state.map((currentCard) =>
           currentCard._id === card._id ? newCard : currentCard
         )
-        );
+        )
+        .catch(err => console.log(err));
       });
     } else {
       api.addLike(card._id, !isLiked).then((newCard) => {
@@ -148,7 +149,7 @@ export default function App() {
           state.map((currentCard) =>
             currentCard._id === card._id ? newCard : currentCard
           )
-        );
+        )
       })
         .catch(err => console.log(err));
     }
