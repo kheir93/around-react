@@ -105,4 +105,11 @@ const api = new Api({
     }
   });
 
+// const api = new Api({
+//   baseUrl: 'http://localhost:27017/aroundb',
+//   headers: {
+//     "Content-Type": "application/json"
+//   }
+// });
+
   export default api

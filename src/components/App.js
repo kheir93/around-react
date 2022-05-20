@@ -21,6 +21,7 @@ export default function App() {
   const [cardDelete, setCardDelete] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const [tooltip, setTooltip] = useState(false);
 
   //Cards and profile rendering//
   useEffect(() => {
